@@ -63,3 +63,4 @@ postgresql:
   username: ${DB_USERNAME}
   password: ${DB_PASSWORD}
   ssl: allow
+
