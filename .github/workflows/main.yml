@@ -36,5 +36,46 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image
-        run: docker build -t autogestion-service:latest .
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push Docker image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: autogestion-service
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Terraform Init
+        run: terraform -chdir=terraform init
+
+      - name: Terraform Apply
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_JDBC_URL: ${{ secrets.DB_JDBC_URL }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          SECURITY_GROUP_ID: ${{ secrets.SECURITY_GROUP_ID }}
+          TARGETGROUP: ${{ secrets.TARGETGROUP }}
+          VPC_ID: ${{ secrets.VPC_ID }}
+        run: |
+          terraform -chdir=terraform apply -auto-approve \
+            -var="db_host=$DB_HOST" \
+            -var="db_jdbc_url=$DB_JDBC_URL" \
+            -var="db_password=$DB_PASSWORD" \
+            -var="db_username=$DB_USERNAME" \
+            -var="jwt_secret=$JWT_SECRET" \
+            -var="security_group_id=$SECURITY_GROUP_ID" \
+            -var="targetgroup=$TARGETGROUP" \
+            -var="vpc_id=$VPC_ID"
