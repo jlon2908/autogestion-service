@@ -58,3 +58,12 @@ postgresql:
   username: ${DB_USERNAME}
   password: ${DB_PASSWORD}
   ssl: allow
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
