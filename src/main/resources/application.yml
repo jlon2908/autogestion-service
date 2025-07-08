@@ -63,7 +63,16 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health,info
   endpoint:
     health:
       show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: autogestion-service
+    description: Servicio de autogestión para Arka
+    version: 1.0.0

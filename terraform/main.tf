@@ -51,6 +51,14 @@ resource "aws_ecs_task_definition" "autogestion_service" {
           hostPort      = 8085
         }
       ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/autogestion-service"
+          awslogs-region        = "us-east-1"
+          awslogs-stream-prefix = "ecs"
+        }
+      }
       environment = [
         { name = "DB_HOST", value = var.db_host },
         { name = "DB_JDBC_URL", value = var.db_jdbc_url },
@@ -84,6 +92,11 @@ resource "aws_ecs_service" "autogestion_service" {
     container_port   = 8085
   }
   depends_on = [aws_ecr_repository.autogestion_service]
+}
+
+resource "aws_cloudwatch_log_group" "autogestion_service" {
+  name              = "/ecs/autogestion-service"
+  retention_in_days = 14
 }
 
 variable "db_host" {}
