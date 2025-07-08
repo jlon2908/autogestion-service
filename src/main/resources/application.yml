@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: autogestion-service
+
+  flyway:
+    url: ${DB_JDBC_URL}
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  rabbitmq:
+    host: b-9c37d3b2-a2d6-4eec-b2ba-9d00caa37773.mq.us-east-1.on.aws
+    port: 5671
+    username: admin
+    password: admin
+
+rabbitmq:
+  queues:
+    cart-clear: cart.clear.queue
+  exchanges:
+    cart-clear: cart.clear.exchange
+  bindings:
+    cart-clear:
+      destination: cart.clear.queue
+      destinationType: queue
+      exchange: cart.clear.exchange
+      routingKey: cart.clear
+
+
+  main:
+    web-application-type: reactive
+
+  jackson:
+    serialization:
+      indent-output: true
+
+server:
+  port: 8085
+
+logging:
+  level:
+    org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
+    org.springframework.web.reactive.function.client.WebClient: DEBUG
+    org.springframework.data.r2dbc.core: DEBUG
+    org.springframework.security: DEBUG
+
+catalog:
+  base-url: http://arka-alb-1425980331.us-east-1.elb.amazonaws.com
+
+inventory:
+  base-url: http://localhost:8083
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+
+postgresql:
+  host: ${DB_HOST}
+  port: 5432
+  database: autogestiondb
+  schema: public
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
+  ssl: allow
