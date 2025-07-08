@@ -12,10 +12,6 @@ resource "aws_ecr_repository" "autogestion_service" {
   }
 }
 
-output "ecr_repository_url" {
-  value = aws_ecr_repository.autogestion_service.repository_url
-}
-
 # Uso de bucket S3 existente (arka-dev-artifacts)
 # No se crea el bucket, solo se referencia
 output "s3_bucket_name" {
@@ -26,3 +22,4 @@ output "s3_bucket_name" {
 output "s3_prefix" {
   value = "autogestion-service/"
 }
+
