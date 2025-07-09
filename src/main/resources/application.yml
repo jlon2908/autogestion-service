@@ -7,6 +7,7 @@ spring:
     password: ${DB_PASSWORD}
     baseline-on-migrate: true
     locations: classpath:db/migration
+
   rabbitmq:
     host: b-9c37d3b2-a2d6-4eec-b2ba-9d00caa37773.mq.us-east-1.on.aws
     port: 5671
@@ -14,6 +15,7 @@ spring:
     password: LONque12345*
     ssl:
       enabled: true
+
   main:
     web-application-type: reactive
   jackson:
@@ -46,7 +48,7 @@ catalog:
   base-url: http://arka-alb-1425980331.us-east-1.elb.amazonaws.com
 
 inventory:
-  base-url: http://localhost:8083
+  base-url: http://arka-alb-1425980331.us-east-1.elb.amazonaws.com
 
 security:
   jwt:
